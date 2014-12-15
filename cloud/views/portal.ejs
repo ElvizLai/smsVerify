@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <!-- 新 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+
+  <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+  <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    </head>
+
+    <body>
+      <div class="panel panel-default">
+
+        <div class="panel-heading">
+          <h2 class="panel-title"><%= title %></h2>
+        </div>
+
+        <div class="panel-body" >
+          <form name="AuthForm">
+
+            <div class="input-group" >
+              <span class="input-group-addon"><span class="glyphicon glyphicon-phone"></span>手机号</span>
+              <input id="phone" class="form-control" maxLength="11" type="value" placeholder="phoneNumber">
+              <span class="input-group-btn"><button id="requestSMSBtn" class="btn btn-default" type="button" onclick="requestMSG();">发送短信验证码</button></span>
+            </div>
+
+            <div class="input-group">
+             <span class="input-group-addon"><span class="glyphicon glyphicon-comment"></span>认证码</span>
+             <input id="code" class="form-control" type="value" maxLength="6" placeholder="verifyCode">
+             <span class="input-group-btn"><button class="btn btn-info" type="button" onclick="verifyMSG();">提交</button></span>
+           </div>
+
+         </form>
+
+       </div>
+
+     </div>
+
+   </body>
+
+   <script>
+     //检查手机号
+     var phone = document.getElementById("phone");
+     var code = document.getElementById("code");
+     var requestSMSBtn = document.getElementById("requestSMSBtn");
+     var wait = 600;
+
+     function requestMSG() {
+
+      if (phone.value == "") {
+        alert("手机号码不能为空！");
+        document.AuthForm.phone.focus();
+        return false;
+      }
+
+      if (!(/^0?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/.test(phone.value))) {
+        alert("您的手机号码输入有误，请检查您的输入号码！");
+        document.AuthForm.phone.focus();
+        return false;
+      }
+
+      var requestUrl = "https://wxportal.avosapps.com/requestSMS?phoneNumber=" + phone.value + "&random=" + Math.random;
+      $.getJSON(requestUrl, function(response) {
+        if (response.code == 0) {
+          count();
+          alert(response.msg);
+        } else {
+          wait = response.msg;
+          count();
+          alert("您已经申请过短信认证，请不要重复申请，请等待" + wait + "秒后再进行尝试!");
+        }
+      });
+      return true;
+    }
+
+    function verifyMSG() {
+      if (phone.value == "") {
+        alert("手机号码不能为空！");
+        document.AuthForm.phone.focus();
+        return false
+      }
+
+      if (!(/^0?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/.test(phone.value))) {
+        alert("您的手机号码输入有误，请检查您的输入号码！");
+        document.AuthForm.phone.focus();
+        return false;
+      }
+
+      if (code.value == "") {
+        alert("验证码不能为空！");
+        document.AuthForm.code.focus();
+        return false;
+      }
+
+      if (code.value.length != 6) {
+        alert("您输入的验证码位数不正确");
+        document.AuthForm.code.focus();
+        return false;
+      }
+
+      var requestUrl = "https://wxportal.avosapps.com/verifySMS?phoneNumber=" + phone.value + "&verifyCode=" + code.value+ "&random=" + Math.random;
+      $.getJSON(requestUrl, function(response) {
+        if (response.code == 0) {
+          //成功
+          alert(response.msg);
+        } else {
+          alert(response.msg);
+        }
+
+      });
+      return true;
+    }
+
+    function count(){
+      phone.setAttribute('disabled', true);
+      requestSMSBtn.setAttribute('disabled', true);
+      var t = setInterval(function(){
+        requestSMSBtn.innerHTML = wait + "秒后可重新获取验证码";
+        if (wait<0) {
+          requestSMSBtn.innerHTML = "发送短信验证码"
+          phone.removeAttribute('disabled');
+          requestSMSBtn.removeAttribute('disabled');
+          clearInterval(t);
+        }
+        wait--;
+      }, 1000);
+    }
+    
+  </script>
+  </html>

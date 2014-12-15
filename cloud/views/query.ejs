@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+  <!-- 新 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+
+  <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+  <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    </head>
+
+    <body>
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>手机号码</th>
+            <th>请求次数</th>
+            <th>认证次数</th>
+            <th>认证率(%)</th>
+            <th>首次登录时间</th>
+            <th>上次登录时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% 
+          var localOffset = new Date().getTimezoneOffset()*60000;
+          var dataFormat = function dateFormat(date,format) {
+            var z = {M:date.getMonth()+1,d:date.getDate(),h:date.getHours(),m:date.getMinutes(),s:date.getSeconds()};
+            format = format.replace(/(M+|d+|h+|m+|s+)/g,function(v) {return ((v.length>1?"0":"")+eval('z.'+v.slice(-1))).slice(-2)});
+            return format.replace(/(y+)/g,function(v) {return date.getFullYear().toString().slice(-v.length)});
+          }
+          %>
+          <% for(var i=0;i<data.length;i++){ %>
+          <tr>
+            <td><%- data[i].get("phoneNum") %></td>
+            <td><%- data[i].get("frequency") %></td>
+            <td><%- data[i].get("verifyFrequency") %></td>
+            <td><%- Math.round(data[i].get("verifyFrequency")/data[i].get("frequency")*100) +"%" %></td>
+            <td><%= dataFormat(new Date(data[i].createdAt.getTime()+ localOffset +3600000*8),"yyyy-MM-dd hh:mm") %></td>
+            <td><%= dataFormat(new Date(data[i].updatedAt.getTime()+ localOffset +3600000*8),"yyyy-MM-dd hh:mm") %></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </body>
+
+    </html>

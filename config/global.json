@@ -1,0 +1,9 @@
+{
+    "applicationName" : "WXPortal",
+    "applicationId": "4wf4fj74qlb0ysgnnlvx1flraz2ht0qgldzcx4d7xpbpevsc",
+    "applicationKey": "m8oexnwyn6644w3hwgfdxojg7xtyvio1j4oe8e8wzwm30do7",
+    "avoscloud-sdk": "latest",
+    "global": {
+        "avVersion": "0.3.1"
+    }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "WXPortal",
+  "version": "1.0.0",
+  "description": "WXPortal",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sdrzlyz",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.9.3",
+    "cheerio": "^0.18.0",
+    "express": "^4.10.3",
+    "eventproxy": "^0.3.1",
+    "superagent": "^0.21.0",
+    "utility": "^1.2.1"
+  }
+}
